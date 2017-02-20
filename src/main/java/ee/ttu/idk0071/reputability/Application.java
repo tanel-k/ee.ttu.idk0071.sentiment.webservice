@@ -1,4 +1,4 @@
-package ee.ttu.idk0071.ereputation;
+package ee.ttu.idk0071.reputability;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
