@@ -1,4 +1,4 @@
-package ee.ttu.idk0071.ereputation;
+package ee.ttu.idk0071.reputability;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
