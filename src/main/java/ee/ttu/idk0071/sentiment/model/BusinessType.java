@@ -6,19 +6,19 @@ import javax.persistence.Id;
 @Entity
 public class BusinessType {
 	@Id
-	private int code;
+	private int id;
 	private String name;
 	
 	public BusinessType() {
 		
 	}
 
-	public int getCode() {
-		return code;
+	public int getId() {
+		return id;
 	}
 
-	public void setCode(int code) {
-		this.code = code;
+	public void setId(int code) {
+		this.id = code;
 	}
 
 	public String getName() {
