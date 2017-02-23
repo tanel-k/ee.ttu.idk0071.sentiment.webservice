@@ -6,7 +6,7 @@ import javax.persistence.Id;
 @Entity
 public class BusinessType {
 	@Id
-	private int id;
+	private Integer id;
 	private String name;
 	
 	public BusinessType() {
@@ -17,7 +17,7 @@ public class BusinessType {
 		return id;
 	}
 
-	public void setId(int code) {
+	public void setId(Integer code) {
 		this.id = code;
 	}
 
