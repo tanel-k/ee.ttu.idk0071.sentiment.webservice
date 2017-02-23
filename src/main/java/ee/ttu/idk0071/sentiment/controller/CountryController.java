@@ -14,12 +14,12 @@ import ee.ttu.idk0071.sentiment.service.CountryService;
 public class CountryController {
 	@Autowired
 	private CountryService countryService;
-	
+
 	@RequestMapping("/classifiers/countries")
 	public List<Country> getCountries() {
 		return countryService.getCountries();
 	}
-	
+
 	@RequestMapping("/classifiers/countries/{code}")
 	public Country getCountry(@PathVariable String code) {
 		return countryService.getCountry(code);

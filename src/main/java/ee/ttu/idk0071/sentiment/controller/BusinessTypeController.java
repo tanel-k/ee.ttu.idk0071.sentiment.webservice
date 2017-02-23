@@ -14,12 +14,12 @@ import ee.ttu.idk0071.sentiment.service.BusinessTypeService;
 public class BusinessTypeController {
 	@Autowired
 	private BusinessTypeService businessTypeService;
-	
+
 	@RequestMapping("/classifiers/business-types")
 	public List<BusinessType> getBusinessTypes() {
 		return businessTypeService.getBusinessTypes();
 	}
-	
+
 	@RequestMapping("/classifiers/business-types/{id}")
 	public BusinessType getBusinessTypes(@PathVariable int id) {
 		return businessTypeService.getBusinessType(id);

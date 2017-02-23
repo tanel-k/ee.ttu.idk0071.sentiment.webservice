@@ -8,7 +8,7 @@ public class Country {
 	@Id
 	private String code;
 	private String name;
-	
+
 	public Country() {
 		
 	}

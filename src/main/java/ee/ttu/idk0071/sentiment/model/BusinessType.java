@@ -8,7 +8,7 @@ public class BusinessType {
 	@Id
 	private Integer id;
 	private String name;
-	
+
 	public BusinessType() {
 		
 	}

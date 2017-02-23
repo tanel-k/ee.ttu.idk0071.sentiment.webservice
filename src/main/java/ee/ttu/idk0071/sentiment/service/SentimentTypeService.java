@@ -12,11 +12,11 @@ import ee.ttu.idk0071.sentiment.model.SentimentType;
 public class SentimentTypeService {
 	@Autowired
 	private SentimentTypeRepository sentimentTypeRepository;
-	
+
 	public List<SentimentType> getSentimentTypes() {
 		return sentimentTypeRepository.findAll();
 	}
-	
+
 	public SentimentType getSentimentType(String code) {
 		return sentimentTypeRepository.findOne(code);
 	}

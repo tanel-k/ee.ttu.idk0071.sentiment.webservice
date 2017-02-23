@@ -8,7 +8,7 @@ public class SentimentType {
 	@Id
 	private String code;
 	private String name;
-	
+
 	public SentimentType() {
 		
 	}

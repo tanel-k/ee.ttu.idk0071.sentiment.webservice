@@ -12,11 +12,11 @@ import ee.ttu.idk0071.sentiment.model.Country;
 public class CountryService {
 	@Autowired
 	private CountryRepository countryRepository;
-	
+
 	public List<Country> getCountries() {
 		return countryRepository.findAll();
 	}
-	
+
 	public Country getCountry(String code) {
 		return countryRepository.findOne(code);
 	}
