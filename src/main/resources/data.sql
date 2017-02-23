@@ -12,3 +12,5 @@ INSERT INTO business_type(id, name) VALUES (3, 'Private banking');
 INSERT INTO country(code, name) VALUES ('EST', 'Estonia');
 INSERT INTO country(code, name) VALUES ('USA', 'United States of America');
 INSERT INTO country(code, name) VALUES ('AUS', 'Australia');
+
+INSERT INTO sentiment_lookup_domain(id, name) VALUES (1, 'Google');
