@@ -30,7 +30,7 @@ public class SentimentLookupController {
 	@RequestMapping(value="/lookups", method=RequestMethod.POST)
 	public SentimentLookup createLookup(@RequestBody SentimentLookupRequest lookupRequest) {
 		return sentimentLookupService.beginLookup(
-			countryService.getCountry(lookupRequest.getCountryId()), 
+			countryService.getCountry(lookupRequest.getCountryCode()), 
 			businessTypeService.getBusinessType(lookupRequest.getBusinessTypeId()), 
 			lookupRequest.getBusinessName());
 	}
