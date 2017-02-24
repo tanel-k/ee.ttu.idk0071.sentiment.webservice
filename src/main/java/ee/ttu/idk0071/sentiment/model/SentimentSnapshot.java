@@ -6,6 +6,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 public class SentimentSnapshot {
 	@Id
@@ -16,6 +18,7 @@ public class SentimentSnapshot {
 	private String title;
 	private Float trustLevel;
 
+	@JsonIgnore
 	@ManyToOne
 	private SentimentLookup sentimentLookup;
 	@ManyToOne

@@ -7,7 +7,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.Transient;
 
 @Entity
 public class SentimentLookup {
@@ -18,8 +17,7 @@ public class SentimentLookup {
 	
 	@ManyToOne
 	private Business business;
-	
-	@Transient
+	@ManyToOne
 	private SentimentType sentimentType;
 
 	public SentimentLookup() {
@@ -48,6 +46,14 @@ public class SentimentLookup {
 
 	public void setDate(Date date) {
 		this.date = date;
+	}
+
+	public SentimentType getSentimentType() {
+		return sentimentType;
+	}
+
+	public void setSentimentType(SentimentType sentimentType) {
+		this.sentimentType = sentimentType;
 	}
 
 }

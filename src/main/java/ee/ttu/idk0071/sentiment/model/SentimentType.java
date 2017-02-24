@@ -5,6 +5,10 @@ import javax.persistence.Id;
 
 @Entity
 public class SentimentType {
+	public static final String TYPE_CODE_POSITIVE = "POS";
+	public static final String TYPE_CODE_NEUTRAL = "NEU";
+	public static final String TYPE_CODE_NEGATIVE = "NEG";
+	
 	@Id
 	private String code;
 	private String name;
