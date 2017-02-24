@@ -68,7 +68,7 @@ public class SentimentLookupService {
 		
 		for (SearchEngineResult searchLink : searchLinks) {
 			try {
-				PageSentiment sentiment = analyzer.analyze(searchLink.getUrl());
+				PageSentiment sentiment = analyzer.analyzePage(searchLink.getUrl());
 				
 				SentimentSnapshot snapshot = new SentimentSnapshot();
 				snapshot.setRank(searchLink.getRank());
