@@ -9,11 +9,11 @@ public class SentimentLookupRequest {
 		
 	}
 
-	public String getCountryId() {
+	public String getCountryCode() {
 		return countryCode;
 	}
 
-	public void setCountryId(String countryCode) {
+	public void setCountryCode(String countryCode) {
 		this.countryCode = countryCode;
 	}
 
