@@ -22,6 +22,7 @@ import ee.ttu.idk0071.sentiment.model.Business;
 import ee.ttu.idk0071.sentiment.model.BusinessType;
 import ee.ttu.idk0071.sentiment.model.Country;
 import ee.ttu.idk0071.sentiment.model.SentimentLookup;
+import ee.ttu.idk0071.sentiment.model.SentimentLookupDomain;
 import ee.ttu.idk0071.sentiment.model.SentimentSnapshot;
 import ee.ttu.idk0071.sentiment.model.SentimentType;
 
@@ -64,18 +65,21 @@ public class SentimentLookupService {
 		List<SearchEngineResult> searchLinks = scraper.search(query);
 		
 		int neuCnt = 0, posCnt = 0, negCnt = 0;
+		Long rankNr = 0L;
 		SentimentAnalyzer analyzer = new BasicSentimentAnalyzer(500);
+		SentimentLookupDomain lookupDomain = sentimentLookupDomainRepository.findByName("Google");
 		
 		for (SearchEngineResult searchLink : searchLinks) {
 			try {
 				PageSentiment sentiment = analyzer.analyzePage(searchLink.getUrl());
 				
 				SentimentSnapshot snapshot = new SentimentSnapshot();
-				snapshot.setRank(searchLink.getRank());
+				snapshot.setRank(rankNr++);
 				snapshot.setTitle(searchLink.getTitle());
 				snapshot.setUrl(searchLink.getUrl());
 				snapshot.setTrustLevel(sentiment.getTrustLevel());
 				snapshot.setSentimentLookup(sentimentLookup);
+				snapshot.setSentimentLookupDomain(lookupDomain);
 				
 				SentimentType pageSentimentType = null;
 				switch (sentiment.getSentimentType()) {
