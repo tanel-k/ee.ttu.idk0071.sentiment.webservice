@@ -22,6 +22,7 @@ import ee.ttu.idk0071.sentiment.model.Business;
 import ee.ttu.idk0071.sentiment.model.BusinessType;
 import ee.ttu.idk0071.sentiment.model.Country;
 import ee.ttu.idk0071.sentiment.model.SentimentLookup;
+import ee.ttu.idk0071.sentiment.model.SentimentLookupDomain;
 import ee.ttu.idk0071.sentiment.model.SentimentSnapshot;
 import ee.ttu.idk0071.sentiment.model.SentimentType;
 
@@ -63,40 +64,43 @@ public class SentimentLookupService {
 		SearchEngineQuery query = new SearchEngineQuery(queryString, 10);
 		List<SearchEngineResult> searchLinks = scraper.search(query);
 		
-		int neuCnt = 0, posCnt = 0, negCnt = 0;
+		float neuCnt = 0, posCnt = 0, negCnt = 0;
+		Long rankNr = 1L;
 		SentimentAnalyzer analyzer = new BasicSentimentAnalyzer(500);
+		SentimentLookupDomain lookupDomain = sentimentLookupDomainRepository.findByName("Google");
 		
 		for (SearchEngineResult searchLink : searchLinks) {
 			try {
 				PageSentiment sentiment = analyzer.analyzePage(searchLink.getUrl());
 				
 				SentimentSnapshot snapshot = new SentimentSnapshot();
-				snapshot.setRank(searchLink.getRank());
+				snapshot.setRank(rankNr++);
 				snapshot.setTitle(searchLink.getTitle());
 				snapshot.setUrl(searchLink.getUrl());
 				snapshot.setTrustLevel(sentiment.getTrustLevel());
 				snapshot.setSentimentLookup(sentimentLookup);
+				snapshot.setSentimentLookupDomain(lookupDomain);
 				
 				SentimentType pageSentimentType = null;
 				switch (sentiment.getSentimentType()) {
 					case NEUTRAL:
 						pageSentimentType = sentimentTypeRepository.findOne(SentimentType.TYPE_CODE_NEUTRAL);
-						neuCnt++;
+						neuCnt += sentiment.getTrustLevel() / 100;
 						break;
 					case POSITIVE:
 						pageSentimentType = sentimentTypeRepository.findOne(SentimentType.TYPE_CODE_POSITIVE);
-						posCnt++;
+						posCnt += sentiment.getTrustLevel() / 100;
 						break;
 					case NEGATIVE:
 						pageSentimentType = sentimentTypeRepository.findOne(SentimentType.TYPE_CODE_NEGATIVE);
-						negCnt++;
+						negCnt += sentiment.getTrustLevel() / 100;
 						break;
 					default:
 						break;
 				}
 				
 				snapshot.setSentimentType(pageSentimentType);
-				snapshot.setSentimentLookupDomain(sentimentLookupDomainRepository.findByName("Google"));
+				snapshot.setSentimentLookupDomain(lookupDomain);
 				sentimentSnapshotRepository.save(snapshot);
 			} catch (Throwable t) {
 				continue;
