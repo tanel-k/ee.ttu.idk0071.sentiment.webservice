@@ -64,8 +64,8 @@ public class SentimentLookupService {
 		SearchEngineQuery query = new SearchEngineQuery(queryString, 10);
 		List<SearchEngineResult> searchLinks = scraper.search(query);
 		
-		int neuCnt = 0, posCnt = 0, negCnt = 0;
-		Long rankNr = 0L;
+		float neuCnt = 0, posCnt = 0, negCnt = 0;
+		Long rankNr = 1L;
 		SentimentAnalyzer analyzer = new BasicSentimentAnalyzer(500);
 		SentimentLookupDomain lookupDomain = sentimentLookupDomainRepository.findByName("Google");
 		
@@ -85,22 +85,22 @@ public class SentimentLookupService {
 				switch (sentiment.getSentimentType()) {
 					case NEUTRAL:
 						pageSentimentType = sentimentTypeRepository.findOne(SentimentType.TYPE_CODE_NEUTRAL);
-						neuCnt++;
+						neuCnt += sentiment.getTrustLevel() / 100;
 						break;
 					case POSITIVE:
 						pageSentimentType = sentimentTypeRepository.findOne(SentimentType.TYPE_CODE_POSITIVE);
-						posCnt++;
+						posCnt += sentiment.getTrustLevel() / 100;
 						break;
 					case NEGATIVE:
 						pageSentimentType = sentimentTypeRepository.findOne(SentimentType.TYPE_CODE_NEGATIVE);
-						negCnt++;
+						negCnt += sentiment.getTrustLevel() / 100;
 						break;
 					default:
 						break;
 				}
 				
 				snapshot.setSentimentType(pageSentimentType);
-				snapshot.setSentimentLookupDomain(sentimentLookupDomainRepository.findByName("Google"));
+				snapshot.setSentimentLookupDomain(lookupDomain);
 				sentimentSnapshotRepository.save(snapshot);
 			} catch (Throwable t) {
 				continue;
