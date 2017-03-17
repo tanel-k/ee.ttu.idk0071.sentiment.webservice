@@ -26,13 +26,13 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>ee.ttu.idk0071.sentiment</groupId>
-			<artifactId>lookup-lib</artifactId>
+			<groupId>ee.ttu.idk0071.sentiment.lib</groupId>
+			<artifactId>lookup</artifactId>
 			<version>1.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>ee.ttu.idk0071.sentiment</groupId>
-			<artifactId>db-lib</artifactId>
+			<groupId>ee.ttu.idk0071.sentiment.lib</groupId>
+			<artifactId>db</artifactId>
 			<version>1.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
@@ -41,23 +41,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-jpa</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
-		<!--
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-rest</artifactId> 
-		</dependency>
-		-->
-		
-		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
-			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -74,6 +58,5 @@
 			</plugin>
 		</plugins>
 	</build>
-
 
 </project>
