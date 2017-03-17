@@ -6,11 +6,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import ee.ttu.idk0071.sentiment.dao.BusinessRepository;
-import ee.ttu.idk0071.sentiment.dao.SentimentLookupDomainRepository;
-import ee.ttu.idk0071.sentiment.dao.SentimentLookupRepository;
-import ee.ttu.idk0071.sentiment.dao.SentimentSnapshotRepository;
-import ee.ttu.idk0071.sentiment.dao.SentimentTypeRepository;
 import ee.ttu.idk0071.sentiment.lib.analysis.SentimentAnalyzer;
 import ee.ttu.idk0071.sentiment.lib.analysis.impl.BasicSentimentAnalyzer;
 import ee.ttu.idk0071.sentiment.lib.analysis.objects.PageSentiment;
@@ -19,12 +14,15 @@ import ee.ttu.idk0071.sentiment.lib.scraping.impl.GoogleScraper;
 import ee.ttu.idk0071.sentiment.lib.scraping.objects.SearchEngineQuery;
 import ee.ttu.idk0071.sentiment.lib.scraping.objects.SearchEngineResult;
 import ee.ttu.idk0071.sentiment.model.Business;
-import ee.ttu.idk0071.sentiment.model.BusinessType;
-import ee.ttu.idk0071.sentiment.model.Country;
 import ee.ttu.idk0071.sentiment.model.SentimentLookup;
 import ee.ttu.idk0071.sentiment.model.SentimentLookupDomain;
 import ee.ttu.idk0071.sentiment.model.SentimentSnapshot;
 import ee.ttu.idk0071.sentiment.model.SentimentType;
+import ee.ttu.idk0071.sentiment.repository.BusinessRepository;
+import ee.ttu.idk0071.sentiment.repository.SentimentLookupDomainRepository;
+import ee.ttu.idk0071.sentiment.repository.SentimentLookupRepository;
+import ee.ttu.idk0071.sentiment.repository.SentimentSnapshotRepository;
+import ee.ttu.idk0071.sentiment.repository.SentimentTypeRepository;
 
 @Service
 public class SentimentLookupService {
@@ -43,14 +41,12 @@ public class SentimentLookupService {
 		return sentimentLookupRepository.findOne(id);
 	}
 
-	public SentimentLookup beginLookup(Country country, BusinessType businessType, String businessName) {
-		Business business = businessRepository.findByCountryAndBusinessTypeAndBusinessName(country, businessType, businessName);
+	public SentimentLookup beginLookup(String businessName) {
+		Business business = businessRepository.findByName(businessName);
 		
 		if (business == null) {
 			business = new Business();
-			business.setBusinessType(businessType);
-			business.setCountry(country);
-			business.setBusinessName(businessName);
+			business.setName(businessName);
 			businessRepository.save(business);
 		}
 		
@@ -60,7 +56,7 @@ public class SentimentLookupService {
 		sentimentLookupRepository.save(sentimentLookup);
 		
 		SearchEngineScraper scraper = new GoogleScraper();
-		String queryString = businessName + " AND  " + businessType.getName() + " AND " + country.getCode();
+		String queryString = businessName;
 		SearchEngineQuery query = new SearchEngineQuery(queryString, 10);
 		List<SearchEngineResult> searchLinks = scraper.search(query);
 		
