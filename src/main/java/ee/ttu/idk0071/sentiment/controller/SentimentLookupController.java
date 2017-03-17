@@ -23,6 +23,6 @@ public class SentimentLookupController {
 
 	@RequestMapping(value="/lookups", method=RequestMethod.POST)
 	public SentimentLookup createLookup(@RequestBody SentimentLookupRequest lookupRequest) {
-		return sentimentLookupService.beginLookup(lookupRequest.getBusinessName());
+		return sentimentLookupService.beginLookup(lookupRequest.getEntityName());
 	}
 }

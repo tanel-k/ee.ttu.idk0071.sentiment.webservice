@@ -1,18 +1,18 @@
 package ee.ttu.idk0071.sentiment.controller.objects;
 
 public class SentimentLookupRequest {
-	private String businessName;
+	private String entityName;
 
 	public SentimentLookupRequest() {
 		
 	}
 
-	public String getBusinessName() {
-		return businessName;
+	public String getEntityName() {
+		return entityName;
 	}
 
-	public void setBusinessName(String businessName) {
-		this.businessName = businessName;
+	public void setEntityName(String entityName) {
+		this.entityName = entityName;
 	}
 
 }
