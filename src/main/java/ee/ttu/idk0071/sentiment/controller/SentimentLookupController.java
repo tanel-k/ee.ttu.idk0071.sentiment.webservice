@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import ee.ttu.idk0071.sentiment.controller.objects.SentimentLookupRequest;
-import ee.ttu.idk0071.sentiment.model.SentimentLookup;
+import ee.ttu.idk0071.sentiment.model.Lookup;
 import ee.ttu.idk0071.sentiment.service.SentimentLookupService;
 
 @RestController
@@ -17,12 +17,12 @@ public class SentimentLookupController {
 	private SentimentLookupService sentimentLookupService;
 
 	@RequestMapping("/lookups/{id}")
-	public SentimentLookup getLookup(@PathVariable Long id) {
+	public Lookup getLookup(@PathVariable Long id) {
 		return sentimentLookupService.getLookup(id);
 	}
 
 	@RequestMapping(value="/lookups", method=RequestMethod.POST)
-	public SentimentLookup createLookup(@RequestBody SentimentLookupRequest lookupRequest) {
+	public Lookup createLookup(@RequestBody SentimentLookupRequest lookupRequest) {
 		return sentimentLookupService.beginLookup(lookupRequest.getEntityName());
 	}
 }

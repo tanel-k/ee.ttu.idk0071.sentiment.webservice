@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class SentimentLookupDispatcherConfiguration extends MessageConfiguration {
+public class LookupDispatcherConfiguration extends MessageConfiguration {
 	protected final String lookupQueue = "lookup-request-queue";
 
 	@Bean

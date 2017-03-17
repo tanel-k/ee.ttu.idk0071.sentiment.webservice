@@ -4,16 +4,16 @@ import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import ee.ttu.idk0071.sentiment.amqp.messages.SentimentLookupRequestMessage;
+import ee.ttu.idk0071.sentiment.amqp.messages.LookupRequestMessage;
 
 @Component
-public class SentimentLookupDispatcher {
+public class LookupDispatcher {
 	@Autowired
-	private SentimentLookupDispatcherConfiguration lookupDispatcherConfiguration;
+	private LookupDispatcherConfiguration lookupDispatcherConfiguration;
 	@Autowired
 	private ConnectionFactory connectionFactory;
 
-	public void requestLookup(SentimentLookupRequestMessage lookupMessage) {
+	public void requestLookup(LookupRequestMessage lookupMessage) {
 		lookupDispatcherConfiguration
 			.rabbitTemplate(connectionFactory)
 			.convertAndSend(

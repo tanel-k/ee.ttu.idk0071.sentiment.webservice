@@ -14,6 +14,6 @@ public class SentimentSnapshotService {
 	private SentimentSnapshotRepository sentimentSnapshotRepository;
 
 	public List<SentimentSnapshot> getLookupSnapshots(Long sentimentLookupId) {
-		return sentimentSnapshotRepository.findBySentimentLookupId(sentimentLookupId);
+		return sentimentSnapshotRepository.findByLookupId(sentimentLookupId);
 	}
 }

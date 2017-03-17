@@ -2,7 +2,7 @@ package ee.ttu.idk0071.sentiment.amqp.messages;
 
 import java.util.List;
 
-public class SentimentLookupRequestMessage {
+public class LookupRequestMessage {
 	private Long lookupId;
 	private List<Long> lookupDomainIds;
 
