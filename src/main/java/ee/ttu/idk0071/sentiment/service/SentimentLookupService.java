@@ -7,16 +7,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import ee.ttu.idk0071.sentiment.amqp.LookupDispatcher;
-import ee.ttu.idk0071.sentiment.amqp.messages.LookupRequestMessage;
+import ee.ttu.idk0071.sentiment.amqp.messages.DomainLookupRequestMessage;
 import ee.ttu.idk0071.sentiment.model.Domain;
 import ee.ttu.idk0071.sentiment.model.DomainLookup;
 import ee.ttu.idk0071.sentiment.model.Lookup;
 import ee.ttu.idk0071.sentiment.model.LookupEntity;
 import ee.ttu.idk0071.sentiment.repository.DomainLookupRepository;
+import ee.ttu.idk0071.sentiment.repository.DomainLookupStateRepository;
 import ee.ttu.idk0071.sentiment.repository.DomainRepository;
 import ee.ttu.idk0071.sentiment.repository.LookupEntityRepository;
 import ee.ttu.idk0071.sentiment.repository.LookupRepository;
-import ee.ttu.idk0071.sentiment.repository.LookupStateRepository;
 
 @Service
 public class SentimentLookupService {
@@ -25,7 +25,7 @@ public class SentimentLookupService {
 	@Autowired
 	private LookupEntityRepository lookupEntityRepository;
 	@Autowired
-	private LookupStateRepository lookupStateRepository;
+	private DomainLookupStateRepository domainLookupStateRepository;
 
 	@Autowired
 	private DomainLookupRepository domainLookupRepository;
@@ -54,7 +54,6 @@ public class SentimentLookupService {
 		Lookup lookup = new Lookup();
 		lookup.setLookupEntity(entity);
 		lookup.setDate(new Date());
-		lookup.setLookupState(lookupStateRepository.findByName("Queued"));
 		lookupRepository.save(lookup);
 		
 		for (Integer domainId : domainIds) {
@@ -63,13 +62,14 @@ public class SentimentLookupService {
 			DomainLookup domainLookup = new DomainLookup();
 			domainLookup.setDomain(domain);
 			domainLookup.setLookup(lookup);
+			domainLookup.setDomainLookupState(domainLookupStateRepository.findByName("Queued"));
 			domainLookupRepository.save(domainLookup);
+			
+			// dispatch message
+			DomainLookupRequestMessage lookupMessage = new DomainLookupRequestMessage();
+			lookupMessage.setDomainLookupId(domainLookup.getId());
+			lookupDispatcher.requestLookup(lookupMessage);
 		}
-		
-		// notify executor queue
-		LookupRequestMessage lookupMessage = new LookupRequestMessage();
-		lookupMessage.setLookupId(lookup.getId());
-		lookupDispatcher.requestLookup(lookupMessage);
 		
 		return lookup;
 	}
