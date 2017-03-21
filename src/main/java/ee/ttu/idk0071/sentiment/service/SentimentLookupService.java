@@ -6,124 +6,71 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import ee.ttu.idk0071.sentiment.dao.BusinessRepository;
-import ee.ttu.idk0071.sentiment.dao.SentimentLookupDomainRepository;
-import ee.ttu.idk0071.sentiment.dao.SentimentLookupRepository;
-import ee.ttu.idk0071.sentiment.dao.SentimentSnapshotRepository;
-import ee.ttu.idk0071.sentiment.dao.SentimentTypeRepository;
-import ee.ttu.idk0071.sentiment.lib.analysis.SentimentAnalyzer;
-import ee.ttu.idk0071.sentiment.lib.analysis.impl.BasicSentimentAnalyzer;
-import ee.ttu.idk0071.sentiment.lib.analysis.objects.PageSentiment;
-import ee.ttu.idk0071.sentiment.lib.scraping.SearchEngineScraper;
-import ee.ttu.idk0071.sentiment.lib.scraping.impl.GoogleScraper;
-import ee.ttu.idk0071.sentiment.lib.scraping.objects.SearchEngineQuery;
-import ee.ttu.idk0071.sentiment.lib.scraping.objects.SearchEngineResult;
-import ee.ttu.idk0071.sentiment.model.Business;
-import ee.ttu.idk0071.sentiment.model.BusinessType;
-import ee.ttu.idk0071.sentiment.model.Country;
-import ee.ttu.idk0071.sentiment.model.SentimentLookup;
-import ee.ttu.idk0071.sentiment.model.SentimentLookupDomain;
-import ee.ttu.idk0071.sentiment.model.SentimentSnapshot;
-import ee.ttu.idk0071.sentiment.model.SentimentType;
+import ee.ttu.idk0071.sentiment.amqp.LookupDispatcher;
+import ee.ttu.idk0071.sentiment.amqp.messages.DomainLookupRequestMessage;
+import ee.ttu.idk0071.sentiment.model.Domain;
+import ee.ttu.idk0071.sentiment.model.DomainLookup;
+import ee.ttu.idk0071.sentiment.model.Lookup;
+import ee.ttu.idk0071.sentiment.model.LookupEntity;
+import ee.ttu.idk0071.sentiment.repository.DomainLookupRepository;
+import ee.ttu.idk0071.sentiment.repository.DomainLookupStateRepository;
+import ee.ttu.idk0071.sentiment.repository.DomainRepository;
+import ee.ttu.idk0071.sentiment.repository.LookupEntityRepository;
+import ee.ttu.idk0071.sentiment.repository.LookupRepository;
 
 @Service
 public class SentimentLookupService {
 	@Autowired
-	private SentimentLookupDomainRepository sentimentLookupDomainRepository;
+	private LookupRepository lookupRepository;
 	@Autowired
-	private SentimentLookupRepository sentimentLookupRepository;
+	private LookupEntityRepository lookupEntityRepository;
 	@Autowired
-	private BusinessRepository businessRepository;
-	@Autowired
-	private SentimentSnapshotRepository sentimentSnapshotRepository;
-	@Autowired
-	private SentimentTypeRepository sentimentTypeRepository;
+	private DomainLookupStateRepository domainLookupStateRepository;
 
-	public SentimentLookup getLookup(Long id) {
-		return sentimentLookupRepository.findOne(id);
+	@Autowired
+	private DomainLookupRepository domainLookupRepository;
+	@Autowired
+	private DomainRepository domainRepository;
+
+	@Autowired
+	private LookupDispatcher lookupDispatcher;
+
+	public Lookup getLookup(Long id) {
+		return lookupRepository.findOne(id);
 	}
 
-	public SentimentLookup beginLookup(Country country, BusinessType businessType, String businessName) {
-		Business business = businessRepository.findByCountryAndBusinessTypeAndBusinessName(country, businessType, businessName);
+	public Lookup beginLookup(String entityName, List<Integer> domainIds) {
+		LookupEntity entity = lookupEntityRepository.findByName(entityName);
 		
-		if (business == null) {
-			business = new Business();
-			business.setBusinessType(businessType);
-			business.setCountry(country);
-			business.setBusinessName(businessName);
-			businessRepository.save(business);
+		// find target of search
+		if (entity == null) {
+			// create target if not exists
+			entity = new LookupEntity();
+			entity.setName(entityName);
+			lookupEntityRepository.save(entity);
 		}
 		
-		SentimentLookup sentimentLookup = new SentimentLookup();
-		sentimentLookup.setBusiness(business);
-		sentimentLookup.setDate(new Date());
-		sentimentLookupRepository.save(sentimentLookup);
+		// one parent lookup
+		Lookup lookup = new Lookup();
+		lookup.setLookupEntity(entity);
+		lookup.setDate(new Date());
+		lookupRepository.save(lookup);
 		
-		SearchEngineScraper scraper = new GoogleScraper();
-		String queryString = businessName + " AND  " + businessType.getName() + " AND " + country.getCode();
-		SearchEngineQuery query = new SearchEngineQuery(queryString, 10);
-		List<SearchEngineResult> searchLinks = scraper.search(query);
-		
-		float neuCnt = 0, posCnt = 0, negCnt = 0;
-		Long rankNr = 1L;
-		SentimentAnalyzer analyzer = new BasicSentimentAnalyzer(500);
-		SentimentLookupDomain lookupDomain = sentimentLookupDomainRepository.findByName("Google");
-		
-		for (SearchEngineResult searchLink : searchLinks) {
-			try {
-				PageSentiment sentiment = analyzer.analyzePage(searchLink.getUrl());
-				
-				SentimentSnapshot snapshot = new SentimentSnapshot();
-				snapshot.setRank(rankNr++);
-				snapshot.setTitle(searchLink.getTitle());
-				snapshot.setUrl(searchLink.getUrl());
-				snapshot.setTrustLevel(sentiment.getTrustLevel());
-				snapshot.setSentimentLookup(sentimentLookup);
-				snapshot.setSentimentLookupDomain(lookupDomain);
-				
-				SentimentType pageSentimentType = null;
-				switch (sentiment.getSentimentType()) {
-					case NEUTRAL:
-						pageSentimentType = sentimentTypeRepository.findOne(SentimentType.TYPE_CODE_NEUTRAL);
-						neuCnt += sentiment.getTrustLevel() / 100;
-						break;
-					case POSITIVE:
-						pageSentimentType = sentimentTypeRepository.findOne(SentimentType.TYPE_CODE_POSITIVE);
-						posCnt += sentiment.getTrustLevel() / 100;
-						break;
-					case NEGATIVE:
-						pageSentimentType = sentimentTypeRepository.findOne(SentimentType.TYPE_CODE_NEGATIVE);
-						negCnt += sentiment.getTrustLevel() / 100;
-						break;
-					default:
-						break;
-				}
-				
-				snapshot.setSentimentType(pageSentimentType);
-				snapshot.setSentimentLookupDomain(lookupDomain);
-				sentimentSnapshotRepository.save(snapshot);
-			} catch (Throwable t) {
-				continue;
-			}
+		for (Integer domainId : domainIds) {
+			// one sub-lookup per domain
+			Domain domain = domainRepository.findOne(domainId);
+			DomainLookup domainLookup = new DomainLookup();
+			domainLookup.setDomain(domain);
+			domainLookup.setLookup(lookup);
+			domainLookup.setDomainLookupState(domainLookupStateRepository.findByName("Queued"));
+			domainLookupRepository.save(domainLookup);
+			
+			// dispatch message
+			DomainLookupRequestMessage lookupMessage = new DomainLookupRequestMessage();
+			lookupMessage.setDomainLookupId(domainLookup.getId());
+			lookupDispatcher.requestLookup(lookupMessage);
 		}
 		
-		SentimentType lookupSentimentType = null;
-		if (neuCnt >= posCnt) {
-			if (neuCnt >= negCnt) {
-				lookupSentimentType = sentimentTypeRepository.findOne(SentimentType.TYPE_CODE_NEUTRAL);
-			} else {
-				lookupSentimentType = sentimentTypeRepository.findOne(SentimentType.TYPE_CODE_NEGATIVE);
-			}
-		} else {
-			if (posCnt >= negCnt) {
-				lookupSentimentType = sentimentTypeRepository.findOne(SentimentType.TYPE_CODE_POSITIVE);
-			} else {
-				lookupSentimentType = sentimentTypeRepository.findOne(SentimentType.TYPE_CODE_NEGATIVE);
-			}
-		}
-		
-		sentimentLookup.setSentimentType(lookupSentimentType);
-		sentimentLookupRepository.save(sentimentLookup);
-		return sentimentLookup;
+		return lookup;
 	}
 }

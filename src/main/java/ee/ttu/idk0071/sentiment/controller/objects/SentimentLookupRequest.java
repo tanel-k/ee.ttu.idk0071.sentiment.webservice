@@ -1,36 +1,29 @@
 package ee.ttu.idk0071.sentiment.controller.objects;
 
+import java.util.List;
+
 public class SentimentLookupRequest {
-	private String countryCode;
-	private Integer businessTypeId;
-	private String businessName;
+	private String entityName;
+
+	private List<Integer> domainIds;
 
 	public SentimentLookupRequest() {
 		
 	}
 
-	public String getCountryCode() {
-		return countryCode;
+	public String getEntityName() {
+		return entityName;
 	}
 
-	public void setCountryCode(String countryCode) {
-		this.countryCode = countryCode;
+	public void setEntityName(String entityName) {
+		this.entityName = entityName;
 	}
 
-	public Integer getBusinessTypeId() {
-		return businessTypeId;
+	public List<Integer> getDomainIds() {
+		return domainIds;
 	}
 
-	public void setBusinessType(Integer businessTypeId) {
-		this.businessTypeId = businessTypeId;
+	public void setDomainIds(List<Integer> domainIds) {
+		this.domainIds = domainIds;
 	}
-
-	public String getBusinessName() {
-		return businessName;
-	}
-
-	public void setBusinessName(String businessName) {
-		this.businessName = businessName;
-	}
-
 }
