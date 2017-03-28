@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import ee.ttu.idk0071.sentiment.amqp.LookupDispatcher;
-import ee.ttu.idk0071.sentiment.amqp.messages.DomainLookupRequestMessage;
+import ee.ttu.idk0071.sentiment.lib.messages.DomainLookupRequestMessage;
 import ee.ttu.idk0071.sentiment.model.Domain;
 import ee.ttu.idk0071.sentiment.model.DomainLookup;
 import ee.ttu.idk0071.sentiment.model.Lookup;
