@@ -6,6 +6,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,6 +19,9 @@ import ee.ttu.idk0071.sentiment.service.objects.MissingDomainLookupException;
 @RestController
 @EnableScheduling
 public class DomainLookupController {
+	@Value("${domain-lookups.update-rate-seconds}")
+	private Long updateRate;
+
 	@Autowired
 	private DomainLookupService domainLookupService;
 
@@ -39,7 +43,7 @@ public class DomainLookupController {
 				scheduler.shutdown();
 			}
 		
-		}, 0, 5, TimeUnit.SECONDS);
+		}, 0, updateRate, TimeUnit.SECONDS);
 		
 		return updateEmitter;
 	}
