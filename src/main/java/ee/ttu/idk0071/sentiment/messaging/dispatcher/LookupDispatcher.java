@@ -1,4 +1,4 @@
-package ee.ttu.idk0071.sentiment.amqp;
+package ee.ttu.idk0071.sentiment.messaging.dispatcher;
 
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
