@@ -1,13 +1,13 @@
-package ee.ttu.idk0071.sentiment.controller.objects;
+package ee.ttu.idk0071.sentiment.controller.messages;
 
 import java.util.List;
 
-public class SentimentLookupRequest {
+public class LookupRequest {
 	private String entityName;
 
 	private List<Integer> domainIds;
 
-	public SentimentLookupRequest() {
+	public LookupRequest() {
 		
 	}
 

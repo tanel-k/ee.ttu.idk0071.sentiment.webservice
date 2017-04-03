@@ -6,8 +6,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import ee.ttu.idk0071.sentiment.amqp.LookupDispatcher;
 import ee.ttu.idk0071.sentiment.lib.messages.DomainLookupRequestMessage;
+import ee.ttu.idk0071.sentiment.messaging.dispatcher.LookupDispatcher;
 import ee.ttu.idk0071.sentiment.model.Domain;
 import ee.ttu.idk0071.sentiment.model.DomainLookup;
 import ee.ttu.idk0071.sentiment.model.Lookup;
@@ -65,12 +65,15 @@ public class SentimentLookupService {
 			domainLookup.setDomainLookupState(domainLookupStateRepository.findByName("Queued"));
 			domainLookupRepository.save(domainLookup);
 			
+			// both sides of a relationship need to be updated
+			lookup.getDomainLookups().add(domainLookup);
+			
 			// dispatch message
 			DomainLookupRequestMessage lookupMessage = new DomainLookupRequestMessage();
 			lookupMessage.setDomainLookupId(domainLookup.getId());
 			lookupDispatcher.requestLookup(lookupMessage);
 		}
 		
-		return lookup;
+		return lookupRepository.findOne(lookup.getId());
 	}
 }
