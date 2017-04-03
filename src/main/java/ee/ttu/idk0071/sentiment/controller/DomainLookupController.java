@@ -32,10 +32,8 @@ public class DomainLookupController {
 		scheduler.scheduleAtFixedRate(() -> {
 		
 			try {
-				
 				String state = domainLookupService.getCurrentState(domainLookupId);
-				updateEmitter.send(state, MediaType.TEXT_PLAIN);
-				
+				updateEmitter.send(SseEmitter.event().name("state").data(state));
 			} catch (MissingDomainLookupException ex) {
 				updateEmitter.completeWithError(ex);
 			} catch (IOException ex) {
