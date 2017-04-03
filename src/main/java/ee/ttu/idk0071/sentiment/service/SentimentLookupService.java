@@ -40,6 +40,9 @@ public class SentimentLookupService {
 	}
 
 	public Lookup beginLookup(String entityName, List<Integer> domainIds) {
+		
+		entityName = entityName.toLowerCase().trim().replaceAll(" +", " ");
+		
 		LookupEntity entity = lookupEntityRepository.findByName(entityName);
 		
 		// find target of search
