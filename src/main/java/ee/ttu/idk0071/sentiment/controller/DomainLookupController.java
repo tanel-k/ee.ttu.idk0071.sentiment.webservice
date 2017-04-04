@@ -21,24 +21,32 @@ import ee.ttu.idk0071.sentiment.service.objects.MissingDomainLookupException;
 public class DomainLookupController {
 	@Value("${domain-lookups.update-rate-seconds}")
 	private Long updateRate;
+	@Value("${domain-lookups.sse-timeout-millis}")
+	private Long sseTimeout;
 
 	@Autowired
 	private DomainLookupService domainLookupService;
 
 	@GetMapping("/domain-lookups/{domainLookupId}/updates")
 	public SseEmitter status(@PathVariable Long domainLookupId) {
-		final SseEmitter updateEmitter = new SseEmitter(60*1000L);
-		final ScheduledExecutorService  scheduler = Executors.newSingleThreadScheduledExecutor();
+		SseEmitter updateEmitter = new SseEmitter(sseTimeout);
+		ScheduledExecutorService  scheduler = Executors.newSingleThreadScheduledExecutor();
 		
 		updateEmitter.onCompletion(() -> scheduler.shutdown());
 		updateEmitter.onTimeout(() -> scheduler.shutdown());
-		scheduler.scheduleAtFixedRate(() -> {
 		
+		scheduler.scheduleAtFixedRate(() -> {
 			try {
-				String state = domainLookupService.getCurrentState(domainLookupId);
+				String state;
+				
+				try {
+					state = domainLookupService.getCurrentState(domainLookupId);
+				} catch(MissingDomainLookupException ex) {
+					updateEmitter.completeWithError(ex);
+					return;
+				}
+				
 				updateEmitter.send(SseEmitter.event().name("state").data(state));
-			} catch (MissingDomainLookupException ex) {
-				updateEmitter.completeWithError(ex);
 			} catch (IOException ex) {
 				scheduler.shutdown();
 			}
