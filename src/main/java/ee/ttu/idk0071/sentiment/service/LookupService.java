@@ -19,7 +19,7 @@ import ee.ttu.idk0071.sentiment.repository.LookupEntityRepository;
 import ee.ttu.idk0071.sentiment.repository.LookupRepository;
 
 @Service
-public class SentimentLookupService {
+public class LookupService {
 	@Autowired
 	private LookupRepository lookupRepository;
 	@Autowired
@@ -40,16 +40,14 @@ public class SentimentLookupService {
 	}
 
 	public Lookup beginLookup(String entityName, List<Integer> domainIds) {
-		
-		entityName = entityName.toLowerCase().trim().replaceAll(" +", " ");
-		
-		LookupEntity entity = lookupEntityRepository.findByName(entityName);
+		String normalizedEntityName = normalizeEntityName(entityName);
+		LookupEntity entity = lookupEntityRepository.findByName(normalizedEntityName);
 		
 		// find target of search
 		if (entity == null) {
 			// create target if not exists
 			entity = new LookupEntity();
-			entity.setName(entityName);
+			entity.setName(normalizedEntityName);
 			lookupEntityRepository.save(entity);
 		}
 		
@@ -78,5 +76,9 @@ public class SentimentLookupService {
 		}
 		
 		return lookupRepository.findOne(lookup.getId());
+	}
+
+	private static String normalizeEntityName(String entityName) {
+		return entityName.toLowerCase().trim().replaceAll(" +", " ");
 	}
 }

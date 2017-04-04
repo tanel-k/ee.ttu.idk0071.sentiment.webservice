@@ -12,21 +12,21 @@ import org.springframework.web.bind.annotation.RestController;
 import ee.ttu.idk0071.sentiment.controller.messages.LookupRequest;
 import ee.ttu.idk0071.sentiment.controller.messages.LookupResponse;
 import ee.ttu.idk0071.sentiment.model.Lookup;
-import ee.ttu.idk0071.sentiment.service.SentimentLookupService;
+import ee.ttu.idk0071.sentiment.service.LookupService;
 
 @RestController
 public class SentimentLookupController {
 	@Autowired
-	private SentimentLookupService sentimentLookupService;
+	private LookupService lookupService;
 
 	@RequestMapping("/lookups/{id}")
 	public Lookup getLookup(@PathVariable Long id) {
-		return sentimentLookupService.getLookup(id);
+		return lookupService.getLookup(id);
 	}
 
 	@RequestMapping(value="/lookups", method=RequestMethod.POST)
 	public LookupResponse createLookup(@RequestBody LookupRequest lookupRequest) {
-		Lookup newLookup = sentimentLookupService.beginLookup(
+		Lookup newLookup = lookupService.beginLookup(
 			lookupRequest.getEntityName(),
 			lookupRequest.getDomainIds());
 		
