@@ -19,4 +19,8 @@ public class DomainLookupService {
 		
 		return domainLookup.getDomainLookupState().getName();
 	}
+	
+	public DomainLookup getById(Long domainLookupId){
+		return domainLookupRepository.findOne(domainLookupId);
+	}
 }
