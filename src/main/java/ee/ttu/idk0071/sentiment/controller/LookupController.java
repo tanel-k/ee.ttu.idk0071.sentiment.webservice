@@ -15,7 +15,7 @@ import ee.ttu.idk0071.sentiment.model.Lookup;
 import ee.ttu.idk0071.sentiment.service.LookupService;
 
 @RestController
-public class SentimentLookupController {
+public class LookupController {
 	@Autowired
 	private LookupService lookupService;
 
