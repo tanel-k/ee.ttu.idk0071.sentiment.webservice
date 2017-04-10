@@ -11,12 +11,11 @@ import ee.ttu.idk0071.sentiment.repository.DomainRepository;
 
 @RestController
 public class DomainController {
-
 	@Autowired
 	private DomainRepository domainRepository;
 
 	@RequestMapping("/domains")
-	public List<Domain> getDomains() {
+	List<Domain> getDomains() {
 		return domainRepository.findByActiveTrue();
 	}
 }
