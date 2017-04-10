@@ -30,36 +30,36 @@ public class DomainLookupController {
 	private DomainLookupService domainLookupService;
 
 	@GetMapping("/domain-lookups/{domainLookupId}/updates")
-	public SseEmitter status(@PathVariable Long domainLookupId) {
+	SseEmitter status(@PathVariable Long domainLookupId) {
 		SseEmitter updateEmitter = new SseEmitter(sseTimeout);
 		ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-
+		
 		updateEmitter.onCompletion(() -> scheduler.shutdown());
 		updateEmitter.onTimeout(() -> scheduler.shutdown());
-
+		
 		scheduler.scheduleAtFixedRate(() -> {
 			try {
 				String state;
-
+				
 				try {
 					state = domainLookupService.getCurrentState(domainLookupId);
 				} catch (MissingDomainLookupException ex) {
 					updateEmitter.completeWithError(ex);
 					return;
 				}
-
+				
 				updateEmitter.send(SseEmitter.event().name("state").data(state));
 			} catch (IOException ex) {
 				scheduler.shutdown();
 			}
-
+			
 		}, 0, updateRate, TimeUnit.SECONDS);
-
+		
 		return updateEmitter;
 	}
 
 	@RequestMapping("/domain-lookups/{id}")
-	public DomainLookup getDomainLookup(@PathVariable Long id) {
+	DomainLookup getDomainLookup(@PathVariable Long id) {
 		return domainLookupService.getById(id);
 	}
 }

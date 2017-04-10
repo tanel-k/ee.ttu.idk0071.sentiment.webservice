@@ -13,13 +13,13 @@ public class DomainLookupService {
 	private DomainLookupRepository domainLookupRepository;
 
 	public String getCurrentState(Long domainLookupId) throws MissingDomainLookupException {
-		DomainLookup domainLookup = domainLookupRepository.findOne(domainLookupId);
+		DomainLookup domainLookup = getById(domainLookupId);
 		if (domainLookup == null)
 			throw new MissingDomainLookupException(domainLookupId);
 		
 		return domainLookup.getDomainLookupState().getName();
 	}
-	
+
 	public DomainLookup getById(Long domainLookupId){
 		return domainLookupRepository.findOne(domainLookupId);
 	}
