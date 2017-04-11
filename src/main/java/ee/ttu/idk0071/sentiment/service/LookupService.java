@@ -24,6 +24,8 @@ import ee.ttu.idk0071.sentiment.service.objects.InvalidRequestException;
 
 @Service
 public class LookupService {
+	public static final String DOMAIN_LOOKUP_INITIAL_STATE = "Queued";
+
 	@Autowired
 	private LookupRepository lookupRepository;
 	@Autowired
@@ -80,7 +82,7 @@ public class LookupService {
 			DomainLookup domainLookup = new DomainLookup();
 			domainLookup.setDomain(domain);
 			domainLookup.setLookup(lookup);
-			domainLookup.setDomainLookupState(domainLookupStateRepository.findByName("Queued"));
+			domainLookup.setDomainLookupState(domainLookupStateRepository.findByName(DOMAIN_LOOKUP_INITIAL_STATE));
 			domainLookupRepository.save(domainLookup);
 			
 			// both sides of a relationship need to be updated
@@ -92,7 +94,7 @@ public class LookupService {
 			lookupDispatcher.requestLookup(lookupMessage);
 		}
 		
-		return lookupRepository.findOne(lookup.getId());
+		return lookup;
 	}
 
 	private LookupEntity getOrCreateLookupEntity(String normalizedEntityName) {
