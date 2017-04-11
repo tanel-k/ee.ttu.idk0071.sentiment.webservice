@@ -51,11 +51,6 @@ public class LookupServiceTests {
 	@Mock
 	private LookupDispatcher lookupDispatcher;
 
-	@Before
-	public void setup() {
-		MockitoAnnotations.initMocks(this);
-	}
-
 	@Test(expected=InvalidRequestException.class)
 	public void testEmptyEntityNameIsRejected() throws InvalidRequestException {
 		String entityName = "";
