@@ -4,14 +4,12 @@ import java.util.List;
 
 import org.assertj.core.util.Lists;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -90,7 +88,7 @@ public class LookupServiceTests {
 	public void testEntityNameNormalization() {
 		String unnormalizedName = "   \tUncle   Joe's  ";
 		String normalizedName = "uncle joe's";
-		Assert.assertEquals(normalizedName, LookupService.normalizeEntityName(unnormalizedName));
+		Assert.assertEquals(normalizedName, LookupEntityService.normalizeEntityName(unnormalizedName));
 	}
 
 	@Test
@@ -103,7 +101,7 @@ public class LookupServiceTests {
 		domain.setActive(true);
 		
 		LookupEntity lookupEntity = new LookupEntity();
-		lookupEntity.setName(LookupService.normalizeEntityName(entityName));
+		lookupEntity.setName(LookupEntityService.normalizeEntityName(entityName));
 		
 		DomainLookupState initialDomainLookupState = new DomainLookupState();
 		DomainLookup domainLookup = new DomainLookup();
