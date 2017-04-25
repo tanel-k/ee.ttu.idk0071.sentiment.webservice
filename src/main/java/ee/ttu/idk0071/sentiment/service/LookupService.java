@@ -68,7 +68,7 @@ public class LookupService {
 			throw new InvalidRequestException("An unknown domain id was included in the request");
 		}
 		
-		String normalizedEntityName = normalizeEntityName(entityName);
+		String normalizedEntityName = LookupEntityService.normalizeEntityName(entityName);
 		LookupEntity lookupEntity = getOrCreateLookupEntity(normalizedEntityName);
 		
 		// one parent lookup
@@ -131,18 +131,5 @@ public class LookupService {
 	public static <T extends Object> boolean containsNulls(List<T> objects) {
 		Predicate<T> nullFilter = (o -> o == null);
 		return objects.stream().anyMatch(nullFilter);
-	}
-
-	/**
-	 * Given a raw entity name, this method will:<br/>
-	 * <ol>
-	 *  <li>compress extraneous whitespace characters</li>
-	 *  <li>remove leading/trailing whitespace characters</li>
-	 *  <li>switch the string to lower case</li>
-	 * </ol>
-	 * The resultant entity name is ready for insertion into the database.
-	 */
-	public static String normalizeEntityName(String entityName) {
-		return entityName.toLowerCase().trim().replaceAll("\\s+", " ");
 	}
 }
