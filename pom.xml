@@ -25,11 +25,13 @@
 	</properties>
 
 	<dependencies>
+		<!-- 
 		<dependency>
 			<groupId>ee.ttu.idk0071.sentiment.lib</groupId>
 			<artifactId>lookup</artifactId>
 			<version>1.0-SNAPSHOT</version>
 		</dependency>
+		 -->
 		<dependency>
 			<groupId>ee.ttu.idk0071.sentiment.lib</groupId>
 			<artifactId>db</artifactId>
