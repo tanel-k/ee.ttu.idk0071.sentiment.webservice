@@ -20,6 +20,7 @@ import ee.ttu.idk0071.sentiment.repository.DomainLookupStateRepository;
 import ee.ttu.idk0071.sentiment.repository.DomainRepository;
 import ee.ttu.idk0071.sentiment.repository.LookupEntityRepository;
 import ee.ttu.idk0071.sentiment.repository.LookupRepository;
+import ee.ttu.idk0071.sentiment.service.consts.ValidationConsts;
 import ee.ttu.idk0071.sentiment.service.objects.InvalidRequestException;
 
 @Service
@@ -49,9 +50,16 @@ public class LookupService {
 	 * Triggers a lookup for the specified entity name.<br/>
 	 * For each domainId, a domain lookup is initiated and a message is dispatched to all executors.
 	 */
-	public Lookup beginLookup(String entityName, List<Integer> domainIds) throws InvalidRequestException {
+	public Lookup beginLookup(String entityName, String requestorEmail, List<Integer> domainIds) throws InvalidRequestException {
 		if (StringUtils.isEmpty(entityName)) {
 			throw new InvalidRequestException("Entity name may not be empty");
+		}
+		
+		requestorEmail = StringUtils.trimAllWhitespace(requestorEmail);
+		requestorEmail = StringUtils.isEmpty(requestorEmail) ? null : requestorEmail;
+		
+		if (requestorEmail != null && !isEmailValid(requestorEmail)) {
+			throw new InvalidRequestException("Invalid e-mail provided");
 		}
 		
 		if (domainIds == null || domainIds.isEmpty()) {
@@ -74,6 +82,7 @@ public class LookupService {
 		// one parent lookup
 		Lookup lookup = new Lookup();
 		lookup.setLookupEntity(lookupEntity);
+		lookup.setEmail(requestorEmail);
 		lookup.setDate(new Date());
 		lookupRepository.save(lookup);
 		
@@ -115,6 +124,10 @@ public class LookupService {
 				.map(id -> domainRepository.findOne(id))
 				.collect(Collectors.toList());
 		return searchDomains;
+	}
+
+	public static boolean isEmailValid(String email) {
+		return ValidationConsts.EMAIL_PATTERN_RFC_5322.matcher(email.trim()).matches();
 	}
 
 	/**

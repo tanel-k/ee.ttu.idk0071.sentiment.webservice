@@ -34,6 +34,7 @@ public class LookupController {
 	LookupResponse createLookup(@RequestBody LookupRequest lookupRequest) throws InvalidRequestException {
 		Lookup newLookup = lookupService.beginLookup(
 				lookupRequest.getEntityName(),
+				lookupRequest.getEmail(),
 				lookupRequest.getDomainIds());
 		
 		LookupResponse response = new LookupResponse();
