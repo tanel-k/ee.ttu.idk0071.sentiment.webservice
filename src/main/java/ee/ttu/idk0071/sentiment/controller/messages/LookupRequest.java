@@ -4,7 +4,7 @@ import java.util.List;
 
 public class LookupRequest {
 	private String entityName;
-
+	private String email;
 	private List<Integer> domainIds;
 
 	public LookupRequest() {
@@ -17,6 +17,14 @@ public class LookupRequest {
 
 	public void setEntityName(String entityName) {
 		this.entityName = entityName;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 	public List<Integer> getDomainIds() {

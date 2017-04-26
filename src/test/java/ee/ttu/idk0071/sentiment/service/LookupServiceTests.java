@@ -52,14 +52,14 @@ public class LookupServiceTests {
 	@Test(expected=InvalidRequestException.class)
 	public void testEmptyEntityNameIsRejected() throws InvalidRequestException {
 		String entityName = "";
-		lookupService.beginLookup(entityName, null);
+		lookupService.beginLookup(entityName, null, null);
 	}
 
 	@Test(expected=InvalidRequestException.class)
 	public void testEmptyDomainListIsRejected() throws InvalidRequestException {
 		String entityName = "testName";
 		List<Integer> domainIds = Lists.emptyList();
-		lookupService.beginLookup(entityName, domainIds);
+		lookupService.beginLookup(entityName, null, domainIds);
 	}
 
 	@Test(expected=InvalidRequestException.class)
@@ -71,7 +71,7 @@ public class LookupServiceTests {
 		
 		String entityName = "testName";
 		List<Integer> domainIds = Lists.newArrayList(inactiveDomainId);
-		lookupService.beginLookup(entityName, domainIds);
+		lookupService.beginLookup(entityName, null, domainIds);
 	}
 
 	@Test(expected=InvalidRequestException.class)
@@ -81,7 +81,7 @@ public class LookupServiceTests {
 		
 		String entityName = "testName";
 		List<Integer> domainIds = Lists.newArrayList(unknownDomainId);
-		lookupService.beginLookup(entityName, domainIds);
+		lookupService.beginLookup(entityName, null, domainIds);
 	}
 
 	@Test
@@ -114,7 +114,7 @@ public class LookupServiceTests {
 		PowerMockito.whenNew(DomainLookup.class).withNoArguments().thenReturn(domainLookup);
 		ArgumentCaptor<DomainLookupRequestMessage> domainLookupRequestMsgCaptor = ArgumentCaptor.forClass(DomainLookupRequestMessage.class);
 		
-		Lookup lookupResult = lookupService.beginLookup(entityName, Lists.newArrayList(domainId));
+		Lookup lookupResult = lookupService.beginLookup(entityName, null, Lists.newArrayList(domainId));
 
 		// check dispatch occurred
 		Mockito.verify(lookupDispatcher, Mockito.times(1)).requestLookup(domainLookupRequestMsgCaptor.capture());
