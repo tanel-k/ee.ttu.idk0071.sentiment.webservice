@@ -79,11 +79,12 @@ public class LookupService {
 		String normalizedEntityName = LookupEntityService.normalizeEntityName(entityName);
 		LookupEntity lookupEntity = getOrCreateLookupEntity(normalizedEntityName);
 		
+		Date dateNow = new Date();
 		// one parent lookup
 		Lookup lookup = new Lookup();
 		lookup.setLookupEntity(lookupEntity);
 		lookup.setEmail(requestorEmail);
-		lookup.setDate(new Date());
+		lookup.setDate(dateNow);
 		lookupRepository.save(lookup);
 		
 		for (Domain domain : searchDomains) {
@@ -92,6 +93,7 @@ public class LookupService {
 			domainLookup.setDomain(domain);
 			domainLookup.setLookup(lookup);
 			domainLookup.setDomainLookupState(domainLookupStateRepository.findByName(DOMAIN_LOOKUP_INITIAL_STATE));
+			domainLookup.setDateSubmitted(dateNow);
 			domainLookupRepository.save(domainLookup);
 			
 			// both sides of a relationship need to be updated
