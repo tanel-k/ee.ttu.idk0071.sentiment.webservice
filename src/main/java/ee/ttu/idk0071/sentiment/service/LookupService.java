@@ -93,7 +93,7 @@ public class LookupService {
 			domainLookup.setDomain(domain);
 			domainLookup.setLookup(lookup);
 			domainLookup.setDomainLookupState(domainLookupStateRepository.findByName(DOMAIN_LOOKUP_INITIAL_STATE));
-			domainLookup.setDateSubmitted(dateNow);
+			domainLookup.setSubmittedDate(dateNow);
 			domainLookupRepository.save(domainLookup);
 			
 			// both sides of a relationship need to be updated
