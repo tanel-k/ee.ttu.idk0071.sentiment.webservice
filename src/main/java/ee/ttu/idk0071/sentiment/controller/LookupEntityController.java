@@ -15,17 +15,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ee.ttu.idk0071.sentiment.controller.objects.MissingResourceException;
-import ee.ttu.idk0071.sentiment.lib.errorHandling.ErrorService;
 import ee.ttu.idk0071.sentiment.model.LookupEntity;
 import ee.ttu.idk0071.sentiment.service.LookupEntityService;
 import ee.ttu.idk0071.sentiment.service.objects.DomainLookupResult;
 
 @RestController
 public class LookupEntityController {
-	private static final String CLASS_NAME = LookupEntityController.class.getName();
-	
-	@Autowired
-	public ErrorService errorService;
 	@Autowired
 	private LookupEntityService lookupEntityService;
 
@@ -51,7 +46,6 @@ public class LookupEntityController {
 
 	@ExceptionHandler({MissingResourceException.class})
 	void handleBadRequest(Throwable t, HttpServletResponse response) throws IOException {
-		errorService.saveError(t, CLASS_NAME);
 		response.sendError(HttpStatus.NOT_FOUND.value(), t.getMessage());
 	}
 }

@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import ee.ttu.idk0071.sentiment.lib.errorHandling.ErrorService;
 import ee.ttu.idk0071.sentiment.model.DomainLookup;
 import ee.ttu.idk0071.sentiment.service.DomainLookupService;
 import ee.ttu.idk0071.sentiment.service.objects.InvalidStateTransitionException;
@@ -33,15 +32,10 @@ public class DomainLookupController {
 	private Long updateRate;
 	@Value("${domain-lookups.sse-timeout-millis}")
 	private Long sseTimeout;
-	
-	private static final String CLASS_NAME = DomainLookupController.class.getName();
-	
 
 	@Autowired
 	private DomainLookupService domainLookupService;
-	@Autowired
-	public ErrorService errorService;
-	
+
 	@GetMapping("/domain-lookups/{domainLookupId}/updates")
 	SseEmitter status(@PathVariable Long domainLookupId) {
 		SseEmitter updateEmitter = new SseEmitter(sseTimeout);
@@ -85,7 +79,6 @@ public class DomainLookupController {
 
 	@ExceptionHandler({MissingDomainLookupException.class, InvalidStateTransitionException.class})
 	void handleBadRequest(Throwable t, HttpServletResponse response) throws IOException {
-		errorService.saveError(t, CLASS_NAME);
 		response.sendError(HttpStatus.BAD_REQUEST.value(), t.getMessage());
 	}
 }
