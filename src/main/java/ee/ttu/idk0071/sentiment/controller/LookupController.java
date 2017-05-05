@@ -16,12 +16,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 import ee.ttu.idk0071.sentiment.controller.messages.LookupRequest;
 import ee.ttu.idk0071.sentiment.controller.messages.LookupResponse;
+import ee.ttu.idk0071.sentiment.lib.errorHandling.ErrorService;
 import ee.ttu.idk0071.sentiment.model.Lookup;
 import ee.ttu.idk0071.sentiment.service.LookupService;
 import ee.ttu.idk0071.sentiment.service.objects.InvalidRequestException;
 
 @RestController
 public class LookupController {
+	private static final String CLASS_NAME = LookupController.class.getName();
+	
+	@Autowired
+	public ErrorService errorService;
 	@Autowired
 	private LookupService lookupService;
 
@@ -46,6 +51,7 @@ public class LookupController {
 
 	@ExceptionHandler({IllegalArgumentException.class, InvalidRequestException.class})
 	void handleBadRequest(Throwable t, HttpServletResponse response) throws IOException {
+		errorService.saveError(t, CLASS_NAME);
 		response.sendError(HttpStatus.BAD_REQUEST.value(), t.getMessage());
 	}
 }
