@@ -1,6 +1,8 @@
 package ee.ttu.idk0071.sentiment.service;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,17 +34,35 @@ public class LookupEntityService {
 	/**
 	 * @return a sequence of domain lookup results for the specified entity and domain id combination
 	 */
-	public List<DomainLookupResult> getResultsForDomain(LookupEntity lookupEntity, Integer domainId) {
+	public List<DomainLookupResult> getHistoryForDomain(LookupEntity lookupEntity, Integer domainId, Optional<Date> rangeStartOpt, Optional<Date> rangeEndOpt) {
 		List<Lookup> entityLookups = lookupEntity.getLookups();
-		List<DomainLookupResult> statsSnapshots = entityLookups.stream()
+		List<DomainLookupResult> historySnapshots = entityLookups.stream()
 				.flatMap(lookup -> lookup.getDomainLookups().stream())
 				.filter(domainLookup -> domainLookup.getDomainLookupState().getCode() == DomainLookup.STATE_CODE_COMPLETE)
 				.filter(domainLookup -> domainLookup.getDomain().getCode() == domainId)
 				.filter(domainLookup -> domainLookup.getTotalCount() > 0)
+				.filter(domainLookup -> {
+					boolean filterValue = true;
+					
+					Date completedDate = domainLookup.getCompletedDate();
+					if (rangeStartOpt.isPresent()) {
+						Date rangeStart = rangeStartOpt.get();
+						boolean afterOrAtRangeStart = completedDate.after(rangeStart) || completedDate.equals(rangeStart);
+						filterValue &= afterOrAtRangeStart;
+					}
+					
+					if (rangeEndOpt.isPresent()) {
+						Date rangeEnd = rangeEndOpt.get();
+						boolean beforeOrAtRangeEnd = completedDate.before(rangeEnd) || completedDate.equals(rangeEnd);
+						filterValue &= beforeOrAtRangeEnd;
+					}
+					
+					return filterValue;
+				})
 				.map(DomainLookupResult::forDomainLookup)
 				.sorted()
 				.collect(Collectors.toList());
-		return statsSnapshots;
+		return historySnapshots;
 	}
 
 	/**

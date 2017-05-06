@@ -1,7 +1,9 @@
 package ee.ttu.idk0071.sentiment.controller;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -24,24 +26,30 @@ public class LookupEntityController {
 	@Autowired
 	private LookupEntityService lookupEntityService;
 
-	@RequestMapping(value="/lookup-entities/{id}/results", method=RequestMethod.GET)
-	List<DomainLookupResult> getLookupStatistics(
-			@PathVariable Long id, 
-			@RequestParam(name="domainId", required=true) Integer domainId) throws MissingResourceException {
-		LookupEntity lookupEntity = lookupEntityService.findById(id);
+	@RequestMapping(value="/lookup-entities/{entityId}/history", method=RequestMethod.GET)
+	List<DomainLookupResult> getLookupEntityHistory(
+			@PathVariable Long entityId, 
+			@RequestParam(name="domainId", required=true) Integer domainId,
+			@RequestParam(name="rangeStart", required=false) Date rangeStart,
+			@RequestParam(name="rangeEnd", required=false) Date rangeEnd) throws MissingResourceException
+	{
+		LookupEntity lookupEntity = lookupEntityService.findById(entityId);
 		if (lookupEntity == null)
 			throw new MissingResourceException();
-		return lookupEntityService.getResultsForDomain(lookupEntity, domainId);
+		return lookupEntityService.getHistoryForDomain(lookupEntity, domainId, Optional.ofNullable(rangeStart), Optional.ofNullable(rangeEnd));
 	}
 
-	@RequestMapping(value="/lookup-entities/results", method=RequestMethod.GET)
-	List<DomainLookupResult> getLookupStatistics(
+	@RequestMapping(value="/lookup-entities/history", method=RequestMethod.GET)
+	List<DomainLookupResult> getLookupEntityHistory(
 			@RequestParam(name="entityName", required=true) String rawEntityName, 
-			@RequestParam(name="domainId", required=true) Integer domainId) throws MissingResourceException {
+			@RequestParam(name="domainId", required=true) Integer domainId,
+			@RequestParam(name="rangeStart", required=false) Date rangeStart,
+			@RequestParam(name="rangeEnd", required=false) Date rangeEnd) throws MissingResourceException
+	{
 		LookupEntity lookupEntity = lookupEntityService.findByName(rawEntityName);
 		if (lookupEntity == null)
 			throw new MissingResourceException();
-		return lookupEntityService.getResultsForDomain(lookupEntity, domainId);
+		return lookupEntityService.getHistoryForDomain(lookupEntity, domainId, Optional.ofNullable(rangeStart), Optional.ofNullable(rangeEnd));
 	}
 
 	@ExceptionHandler({MissingResourceException.class})
