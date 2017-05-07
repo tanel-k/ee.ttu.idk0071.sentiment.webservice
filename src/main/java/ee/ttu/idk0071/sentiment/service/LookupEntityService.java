@@ -45,6 +45,10 @@ public class LookupEntityService {
 					boolean filterValue = true;
 					
 					Date completedDate = domainLookup.getCompletedDate();
+					if (completedDate == null) {
+						return false;
+					}
+					
 					if (rangeStartOpt.isPresent()) {
 						Date rangeStart = rangeStartOpt.get();
 						boolean afterOrAtRangeStart = completedDate.after(rangeStart) || completedDate.equals(rangeStart);

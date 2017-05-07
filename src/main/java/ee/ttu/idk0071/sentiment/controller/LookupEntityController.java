@@ -8,6 +8,7 @@ import java.util.Optional;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,8 +31,8 @@ public class LookupEntityController {
 	List<DomainLookupResult> getLookupEntityHistory(
 			@PathVariable Long entityId, 
 			@RequestParam(name="domainId", required=true) Integer domainId,
-			@RequestParam(name="rangeStart", required=false) Date rangeStart,
-			@RequestParam(name="rangeEnd", required=false) Date rangeEnd) throws MissingResourceException
+			@RequestParam(name="rangeStart", required=false) @DateTimeFormat(pattern="dd/MM/yyyy") Date rangeStart,
+			@RequestParam(name="rangeEnd", required=false) @DateTimeFormat(pattern="dd/MM/yyyy") Date rangeEnd) throws MissingResourceException
 	{
 		LookupEntity lookupEntity = lookupEntityService.findById(entityId);
 		if (lookupEntity == null)
@@ -43,8 +44,8 @@ public class LookupEntityController {
 	List<DomainLookupResult> getLookupEntityHistory(
 			@RequestParam(name="entityName", required=true) String rawEntityName, 
 			@RequestParam(name="domainId", required=true) Integer domainId,
-			@RequestParam(name="rangeStart", required=false) Date rangeStart,
-			@RequestParam(name="rangeEnd", required=false) Date rangeEnd) throws MissingResourceException
+			@RequestParam(name="rangeStart", required=false) @DateTimeFormat(pattern="dd/MM/yyyy") Date rangeStart,
+			@RequestParam(name="rangeEnd", required=false) @DateTimeFormat(pattern="dd/MM/yyyy") Date rangeEnd) throws MissingResourceException
 	{
 		LookupEntity lookupEntity = lookupEntityService.findByName(rawEntityName);
 		if (lookupEntity == null)
